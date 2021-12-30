@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.jang.bbs.mapper.LoginMapper">
+   <select id="findUser"  parameterType="UserVO" resultType="UserVO" >   
+	   SELECT  userId, passwd, name
+	   FROM    bbs_member
+	   WHERE   userId = #{userId} AND passwd = #{passwd}
+  </select>
+   
+   <select id="getUser" parameterType="String"  resultType="UserVO">
+       SELECT *
+       FROM  bbs_member
+       WHERE userId = #{userId} and del_yn = 'n'
+	</select>
+
+	<insert id="insertUser" keyProperty="mno">
+         <selectKey keyProperty="mno" resultType="int" order="BEFORE">  
+             SELECT COALESCE(MAX(mno), 0) + 1 AS mno FROM bbs_member
+          </selectKey>
+      INSERT   INTO bbs_member (mno, name, passwd, userId, birthday, email, phone, zip, addr1, addr2) 
+      VALUES (#{mno}, #{name}, #{passwd}, #{userId}, #{birthday}, #{email}, #{phone}, #{zip}, #{addr1}, #{addr2})
+    </insert>
+			
+  <update id="updateUser" parameterType="UserVO">
+   	    UPDATE  bbs_member
+        SET  passwd = #{passwd}, birthday = #{birthday}, email = #{email}, phone = #{phone}, zip = #{zip}, addr1 = #{addr1}, addr2 = #{addr2}
+        WHERE  userId  = #{userId}
+  </update>
+  
+  <select id="findId" parameterType="UserVO" resultType="UserVO">
+		SELECT	* 
+		FROM	bbs_member 
+		WHERE	name = #{name} AND email = #{email}
+	</select>
+	
+	<select id="findPass" parameterType="UserVO" resultType="UserVO">
+		SELECT	* 
+		FROM	bbs_member 
+		WHERE	userId = #{userId} AND email = #{email}
+	</select>
+  
+  	<update id="updatePass" parameterType="UserVO">
+        UPDATE  bbs_member
+        SET  passwd = #{passwd}
+        WHERE  userId = #{userId}
+  	</update>
+  	
+  <select id="deleteUser" parameterType="String">
+		UPDATE bbs_member	 
+		SET del_yn='y'
+		WHERE	userId = #{userId}
+	</select>
+	
+	
+</mapper>
